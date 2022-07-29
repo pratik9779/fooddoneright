@@ -119,7 +119,7 @@ function App() {
         <button type="submit">submit</button>
       </form>
       {allLocations.map((element) => (
-        <div onClick={() => findRestaurant(element.latitude, element.longitude)} className="location">
+        <div onClick={() => findRestaurant(element.latitude, element.longitude)} style={{ textAlign: "left" }} className="location">
           <span >{element.name}, </span>
           <span>{element.latitude},  </span>
           <span>{element.longitude}</span>
@@ -128,7 +128,12 @@ function App() {
 
       )}
 
-      {resultingLocation.name && <div>{resultingLocation.name} -- {resultingLocation.address} --- {resultingLocation.distance} km</div>}
+      {resultingLocation.name && <div style={{ textAlign: "left", marginLeft: "2rem" }}>
+        <h2>Restaurant</h2>
+        <p>Name - {resultingLocation.name}</p>
+        <p>Address - {resultingLocation.address} </p>
+        <p>Distance from the location - {resultingLocation.distance} km</p>
+      </div>}
 
     </div>
   );
