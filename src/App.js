@@ -1,31 +1,43 @@
 import './App.css';
 import { useEffect, useState } from 'react';
-import Geocode from "react-geocode";
+import data from './file1.json';
 
-var data = [{
-  "code": "0001",
-  "lat": "1.28210155945393",
-  "lng": "103.81722480263163",
-  "location": "Stop 1"
-}, {
-  "code": "0003",
-  "lat": "1.2777380589964",
-  "lng": "103.83749709165197",
-  "location": "Stop 2"
-}, {
-  "code": "0002",
-  "lat": "1.27832046633393",
-  "lng": "103.83762574759974",
-  "location": "Stop 3"
-}];
+// var data = [{
+//   "code": "0001",
+//   "lat": "1.28210155945393",
+//   "lng": "103.81722480263163",
+//   "location": "Stop 1"
+// }, {
+//   "code": "0003",
+//   "lat": "1.2777380589964",
+//   "lng": "103.83749709165197",
+//   "location": "Stop 2"
+// }, {
+//   "code": "0002",
+//   "lat": "1.27832046633393",
+//   "lng": "103.83762574759974",
+//   "location": "Stop 3"
+// }];
 
 function App() {
+  const [restaurantData, setRestaurantData] = useState([])
   const [location, setLocation] = useState("")
   const [allLocations, setAlllocations] = useState([])
   const [resultingLocation, setResultingLocation] = useState({
-    location: "",
+    name: "",
+    address: "",
     distance: 0
   })
+
+  useEffect(() => {
+    const transformedData = data[9].restaurants.map((res) => {
+      return { name: res.restaurant.name, latitude: res.restaurant.location.latitude, longitude: res.restaurant.location.longitude, address: res.restaurant.location.address }
+    })
+    setRestaurantData(transformedData)
+    console.log(transformedData)
+  }, [])
+
+
 
   async function findAddress() {
     var url = "https://nominatim.openstreetmap.org/search?format=json&limit=3&q=" + location
@@ -54,6 +66,11 @@ function App() {
     e.preventDefault()
     findAddress();
     setAlllocations([])
+    setResultingLocation({
+      name: "",
+      address: "",
+      distance: 0
+    })
   }
 
 
@@ -77,17 +94,18 @@ function App() {
 
   const findRestaurant = (poslat, poslng) => {
     let res = 10000000;
-    let location = ""
-    for (var i = 0; i < data.length; i++) {
-      let ans = distance(poslat, poslng, data[i].lat, data[i].lng, "K")
-      console.log(data[i].location, ans)
+
+    for (var i = 0; i < restaurantData.length; i++) {
+      let ans = distance(poslat, poslng, restaurantData[i].latitude, restaurantData[i].longitude, "K")
+
       let prev;
       prev = res;
       res = Math.min(res, ans)
 
       if (prev !== res) {
         setResultingLocation({
-          location: data[i].location,
+          name: restaurantData[i].name,
+          address: restaurantData[i].address,
           distance: res
         })
       }
@@ -110,7 +128,7 @@ function App() {
 
       )}
 
-      {resultingLocation.location && <div>{resultingLocation.location} -- {resultingLocation.distance}</div>}
+      {resultingLocation.name && <div>{resultingLocation.name} -- {resultingLocation.address} --- {resultingLocation.distance} km</div>}
 
     </div>
   );
