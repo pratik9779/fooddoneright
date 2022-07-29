@@ -1,0 +1,28 @@
+.App {
+  text-align: center;
+  font-size: 1rem;
+}
+.form{
+  margin-top: 4rem;
+}
+
+.form input{
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.form button{
+  background-color : rgb(48, 48, 240);
+  border: none;
+  color : white;
+  padding: 1rem;
+  margin-left: 2rem;
+  font-size: 1rem;
+}
+
+.location{
+  background-color : aliceblue;
+  color : blue;
+  margin : 2rem;
+  height: 2rem;
+}
