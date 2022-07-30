@@ -20,7 +20,6 @@ import data from './file1.json';
 // }];
 
 function App() {
-  const [restaurantData, setRestaurantData] = useState([])
   const [location, setLocation] = useState("")
   const [allLocations, setAlllocations] = useState([])
   const [resultingLocation, setResultingLocation] = useState({
@@ -29,18 +28,8 @@ function App() {
     distance: 0
   })
 
-  useEffect(() => {
-    const transformedData = data[9].restaurants.map((res) => {
-      return { name: res.restaurant.name, latitude: res.restaurant.location.latitude, longitude: res.restaurant.location.longitude, address: res.restaurant.location.address }
-    })
-    setRestaurantData(transformedData)
-    console.log(transformedData)
-  }, [])
-
-
-
   async function findAddress() {
-    var url = "https://nominatim.openstreetmap.org/search?format=json&limit=3&q=" + location
+    let url = "https://nominatim.openstreetmap.org/search?format=json&limit=3&q=" + location
 
     const response = await fetch(url);
     const data = await response.json();
@@ -73,43 +62,23 @@ function App() {
     })
   }
 
-
-  function distance(lat1, lon1, lat2, lon2, unit) {
-    var radlat1 = Math.PI * lat1 / 180
-    var radlat2 = Math.PI * lat2 / 180
-    var theta = lon1 - lon2
-    var radtheta = Math.PI * theta / 180
-    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-    if (dist > 1) {
-      dist = 1;
+  const findRestaurant = async (poslat, poslng) => {
+    const reqData = {
+      latitude: poslat,
+      longitude: poslng
     }
-    dist = Math.acos(dist)
-    dist = dist * 180 / Math.PI
-    dist = dist * 60 * 1.1515
-    if (unit === "K") { dist = dist * 1.609344 }
-    if (unit === "N") { dist = dist * 0.8684 }
-    return dist
-  }
 
+    const response = await fetch("http://localhost:8000", {
+      method: "POST",
+      body: JSON.stringify(reqData),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
 
-  const findRestaurant = (poslat, poslng) => {
-    let res = 10000000;
-
-    for (var i = 0; i < restaurantData.length; i++) {
-      let ans = distance(poslat, poslng, restaurantData[i].latitude, restaurantData[i].longitude, "K")
-
-      let prev;
-      prev = res;
-      res = Math.min(res, ans)
-
-      if (prev !== res) {
-        setResultingLocation({
-          name: restaurantData[i].name,
-          address: restaurantData[i].address,
-          distance: res
-        })
-      }
-    }
+    console.log(data.data)
+    setResultingLocation(data.data)
   }
 
   return (
