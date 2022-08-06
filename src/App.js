@@ -27,9 +27,11 @@ function App() {
     address: "",
     distance: 0
   })
+  const [answer, setAnswer] = useState("")
+
 
   async function findAddress() {
-    let url = "https://nominatim.openstreetmap.org/search?format=json&limit=3&q=" + location
+    let url = "https://nominatim.openstreetmap.org/search?format=json&limit=2&q=" + location
 
     const response = await fetch(url);
     const data = await response.json();
@@ -60,25 +62,37 @@ function App() {
       address: "",
       distance: 0
     })
+    setAnswer("")
   }
 
   const findRestaurant = async (poslat, poslng) => {
-    const reqData = {
-      latitude: poslat,
-      longitude: poslng
+
+    try {
+      const reqData = {
+        latitude: poslat,
+        longitude: poslng
+      }
+      const response = await fetch("http://localhost:8000", {
+        method: "POST",
+        body: JSON.stringify(reqData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      console.log(data)
+
+      console.log(data.data.properties.name)
+      setAnswer(data.data.properties.name)
+    }
+    catch (err) {
+      // if (data.status === 204) {
+      setAnswer('not found')
+      // }
     }
 
-    const response = await fetch("http://localhost:8000", {
-      method: "POST",
-      body: JSON.stringify(reqData),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
 
-    console.log(data.data)
-    setResultingLocation(data.data)
+
   }
 
   return (
@@ -94,15 +108,16 @@ function App() {
           <span>{element.longitude}</span>
         </div>
       )
-
       )}
 
-      {resultingLocation.name && <div style={{ textAlign: "left", marginLeft: "2rem" }}>
+      {/* {resultingLocation.name && <div style={{ textAlign: "left", marginLeft: "2rem" }}>
         <h2>Restaurant</h2>
         <p>Name - {resultingLocation.name}</p>
         <p>Address - {resultingLocation.address} </p>
         <p>Distance from the location - {resultingLocation.distance} km</p>
-      </div>}
+      </div>} */}
+
+      {answer && <h1>{answer}</h1>}
 
     </div>
   );
