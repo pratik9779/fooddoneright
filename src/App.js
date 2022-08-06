@@ -27,7 +27,10 @@ function App() {
     address: "",
     distance: 0
   })
-  const [answer, setAnswer] = useState("")
+  const [answer, setAnswer] = useState({
+    polygon: "",
+    restaurant: ""
+  })
 
 
   async function findAddress() {
@@ -62,7 +65,10 @@ function App() {
       address: "",
       distance: 0
     })
-    setAnswer("")
+    setAnswer({
+      polygon: "",
+      restaurant: ""
+    })
   }
 
   const findRestaurant = async (poslat, poslng) => {
@@ -82,17 +88,20 @@ function App() {
       const data = await response.json();
       console.log(data)
 
-      console.log(data.data.properties.name)
-      setAnswer(data.data.properties.name)
+      console.log(data.polygon.properties.name)
+      setAnswer({
+        polygon: data.polygon.properties.name,
+        restaurant: data.restaurant.properties.name
+      })
     }
     catch (err) {
       // if (data.status === 204) {
-      setAnswer('not found')
+      setAnswer({
+        polygon: 'not found',
+        restaurant: 'not found'
+      })
       // }
     }
-
-
-
   }
 
   return (
@@ -117,7 +126,11 @@ function App() {
         <p>Distance from the location - {resultingLocation.distance} km</p>
       </div>} */}
 
-      {answer && <h1>{answer}</h1>}
+      {/* <h1>{answer.polygon}</h1> */}
+      {answer.polygon && <div>
+        <h1>Polygon - {answer.polygon}</h1>
+        <h1>Restaurant - {answer.restaurant}</h1>
+      </div>}
 
     </div>
   );
